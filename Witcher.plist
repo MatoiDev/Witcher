@@ -1,0 +1,8 @@
+{ 
+    Filter = {
+        Bundles = ( 
+            "com.apple.springboard",
+            "com.apple.springboard.launchapplications"
+        );
+    };
+}

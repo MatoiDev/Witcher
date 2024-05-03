@@ -1,0 +1,12 @@
+Package: dr.erast.witcher
+Name: Witcher
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Some description
+Maintainer: Erast <applewormdev@gmail.com>
+Author: Erast <applewormdev@gmail.com>
+Section: Tweaks
+dev: Erast
+Depends: mobilesubstrate, firmware (>= 14.0)
+
+
