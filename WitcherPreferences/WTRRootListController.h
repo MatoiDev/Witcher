@@ -1,5 +1,17 @@
 #import <Preferences/PSListController.h>
+#import <Preferences/PSSpecifier.h>
+#import <notify.h>
 
-@interface WTRRootListController : PSListController
+#import "UI/Cells/HeaderCell/HeaderCell.h"
+#import "UI/Cells/PowerCell/WTRPowerCell.h"
+#import "UI/Cells/AuthorCell/AuthorCell.h"
+
+#import "WitcherCustomFontsProtocol.h"
+
+
+@interface WTRRootListController : PSListController <WitcherCustomFontsProtocol>
+
+@property(nonatomic, strong)UILabel *titleLabel;
+@property(nonatomic, strong)UIImageView *backgroundImageView;
 
 @end

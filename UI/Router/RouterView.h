@@ -39,9 +39,11 @@ typedef void(^LayoutUpdateBlock)(WitcherApplicationLayoutStruct *_Nullable);
 
 @end
 
+// HLOS: 17.1, 16.3, 15.2.1, 14.4, 13.1.3, 12.1, 11.1.2, 11.0.1, 11.0, 10.2, 10.1.1, 9.3.3, 9.0, 8.0, 7.0, 6.0
 @interface AXServer : NSObject
 @end
 
+// HLOS: 17.1, 16.3, 15.2.1, 14.4, 13.1.3, 12.1, 11.1.2, 11.0.1, 11.0, 10.2, 10.1.1, 9.3.3, 9.0, 8.0, 7.0, 6.0
 @interface AXSpringBoardServer : AXServer
 +(id)server;
 -(void)revealSpotlight;
@@ -52,6 +54,7 @@ typedef void(^LayoutUpdateBlock)(WitcherApplicationLayoutStruct *_Nullable);
 -(BOOL)launchApplicationWithIdentifier:(id)arg1 suspended:(BOOL)arg2;
 @end
 
+// HLOS: 17.1, 16.3, 15.2.1, 14.4, 13.1.3, 12.1, 11.1.2, 11.0.1, 10.2, 10.1.1, 9.3.3, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0
 @interface SpringBoard (Launcher)
 -(BOOL)launchApplicationWithIdentifier:(id)arg1 suspended:(BOOL)arg2;
 @end

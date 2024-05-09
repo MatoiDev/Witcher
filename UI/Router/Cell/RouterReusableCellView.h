@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
     _Bool isStackStyle;
 }
 
-@property(nonatomic, retain)UIImageView *iconImageView;
-@property(nonatomic, retain)WitcherApplicationLayoutStruct *layoutStruct;
+@property(nonatomic, strong)UIImageView *iconImageView;
+@property(nonatomic, strong)WitcherApplicationLayoutStruct *layoutStruct;
 @property(nonatomic, nullable, strong)CAShapeLayer *borderLayer;
 
 @property(nonatomic, assign)NSUInteger applicationsCounter;

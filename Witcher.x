@@ -1,5 +1,4 @@
 #import "Witcher.h"
-#include <RemoteLog.h>
 
 /* TODO
 	- (Not implemented) Kill aplications with quick action button: https://www.reddit.com/r/jailbreakdevelopers/comments/d6wbla/remove_app_from_app_switcher/
@@ -270,7 +269,7 @@ _Bool routerViewIsPresented = NO;
 	WitcherApplicationLayoutStruct *applicationStruct = [self performSelector:@selector(getPackedLayoutStructForApplication:) withObject:frontApp];
 
 	RLog(@"New layoutStruct! %@", applicationStruct);
-
+	if (!isEnabled) { return; }
 	[self performSelector:@selector(updateRouterWithFrontMostApplications:) withObject:frontApp];
 
 	handleRouterGestures = NO;
@@ -414,17 +413,23 @@ _Bool routerViewIsPresented = NO;
 -(void)fluidSwitcherGestureTransaction:(id)arg1 didBeginGesture:(id)arg2 {
 	%orig;
 	
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateAppLayouts" object:self];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"ShowWitcherView" object:self];
+
+	if (!isEnabled) { return; }
+
 	if (router && [router alpha] > 0 && arg2) {
 		CGPoint gesturePosition = [[arg2 gestureEvent] locationInContainerView];
 		unsigned long long gesturePhase = [[arg2 gestureEvent] phase];
 		[router handleGestureWithPosition:gesturePosition phase:gesturePhase interactionEnabled:handleRouterGestures];
 	}
 	
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateAppLayouts" object:self];
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"ShowWitcherView" object:self];
+
 }
 
 -(void)fluidSwitcherGestureTransaction:(id)arg1 didUpdateGesture:(id)arg2 { 
+
+	if (!isEnabled) { %orig; return; }
 	double speed = [[arg2 gestureEvent] peakSpeed];
 	
 	if ((speed < 2000 && router && [router alpha] > 0 && arg2) || routerViewIsPresented) {
@@ -442,7 +447,7 @@ _Bool routerViewIsPresented = NO;
 
 -(void)fluidSwitcherGestureTransaction:(id)arg1 didEndGesture:(id)arg2 {
 	%orig;	
-
+	if (!isEnabled) { return; }
 	if (router && [router alpha] > 0 && arg2) {
 		CGPoint gesturePosition = [[arg2 gestureEvent] locationInContainerView];
 		unsigned long long gesturePhase = [[arg2 gestureEvent] phase];
@@ -457,24 +462,32 @@ _Bool routerViewIsPresented = NO;
 
 %hook SBFluidSwitcherSpaceTitleItem
 -(NSString*)subtitleText {
-	return [[self displayItem] bundleIdentifier];
+	return (isEnabled ? [[self displayItem] bundleIdentifier] : %orig);
 }
 %end
 
 
-void updateSettings(){
+static void updateSettings() {
+	NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:WITCHER_PLIST_SETTINGS];
+	isEnabled = prefs[@"isEnabled"] ? [prefs[@"isEnabled"] boolValue] : YES;
 
-	[prefs registerDefaults:@{
-		@"isEnabled": @TRUE,
-	}];
-
-	isEnabled = [[prefs objectForKey:@"isEnabled"] boolValue];
+	RLog(@"Witcher %@", isEnabled ? @"is enabled now" : @"isn't enabled now");
 }
 
+
 static __attribute__((constructor)) void init() {
-	prefs = [[NSUserDefaults alloc] initWithSuiteName:@"dr.erast.witcherprefs"];	
+	
+    
+    // CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL,
+  	// 							 (CFNotificationCallback)loadPrefs, CFSTR("dr.erast.witcherprefs/init"), NULL,
+  	// 							  CFNotificationSuspensionBehaviorDeliverImmediately
+    // );
 
-	updateSettings();	
+	updateSettings();
 
-	if(isEnabled) { %init; }
+	int _;
+	notify_register_dispatch("dr.erast.witcherprefs/init", &_, dispatch_get_main_queue(), ^(int _) {
+		updateSettings();
+	});
+
 }

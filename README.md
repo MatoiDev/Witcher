@@ -1,5 +1,19 @@
+### iOS 16+ is NOT supported yet !
+
+
+https://github.com/MatoiDev/Witcher/assets/78802792/9b2195ae-b183-4e2c-b4de-7560d7d187ca
+
 ### Witcher - Magical iOS App Switcher
 ######  Work in progress...
+
+#### TODO LIST: (Might be replenished...)
+- [X] Make Logo
+- [X] Preferences integration
+- [ ] Add options to preferences
+- [ ] Add support to iOS 16+
+- [ ] Add support to hardware-button devices 
+- [ ] Add xmark button functional
+
 
 ### For testers
 If you find a bug, error, or just something not working, then please let me know [here](https://github.com/MatoiDev/Witcher/issues).

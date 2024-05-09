@@ -18,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
     UIImage* applicationIconImage;
 }
 
-@property(nonatomic, retain)UIImageView *snapshotImageView;
-@property(nonatomic, retain)UIImageView *applicationIconImageView;
-@property(nonatomic, retain)UIView *dropShadowView;
-@property(nonatomic, retain)UIView *bottomViewContainer;
-@property(nonatomic, retain)UILabel *applicationNameLabel;
-@property(nonatomic, retain)UILabel *applicationBundleIDLabel;
-@property(nonatomic, nullable, retain)WitcherApplicationLayoutStruct *layoutStruct;
+@property(nonatomic, strong)UIImageView *snapshotImageView;
+@property(nonatomic, strong)UIImageView *applicationIconImageView;
+@property(nonatomic, strong)UIView *dropShadowView;
+@property(nonatomic, strong)UIView *bottomViewContainer;
+@property(nonatomic, strong)UILabel *applicationNameLabel;
+@property(nonatomic, strong)UILabel *applicationBundleIDLabel;
+@property(nonatomic, nullable, strong)WitcherApplicationLayoutStruct *layoutStruct;
 
 -(instancetype)initWithLayoutStruct:(WitcherApplicationLayoutStruct *)layoutStruct_t;
 -(void)updateWithLayoutStruct:(WitcherApplicationLayoutStruct *_Nullable)layoutStruct_t;

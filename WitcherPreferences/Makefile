@@ -13,8 +13,8 @@ else
     THEOS_DEVICE_IP = 192.168.1.45
 endif
 
-WitcherPreferences_FILES  = $(wildcard *.m)
-WitcherPreferences_FRAMEWORKS = UIKit
+WitcherPreferences_FILES  = $(wildcard *.m) $(wildcard UI/Cells/PowerCell/*.m) $(wildcard UI/Cells/PowerCell/Button/*.m) $(wildcard UI/Cells/AuthorCell/*.m) $(wildcard UI/Cells/HeaderCell/*.m) $(wildcard UI/Cells/AuthorCell/GithubStatsParser/*.m) $(wildcard 3rdPartyLibs/Lottie/*.m) 
+WitcherPreferences_FRAMEWORKS = UIKit CoreText
 WitcherPreferences_PRIVATE_FRAMEWORKS = Preferences
 
 WitcherPreferences_CFLAGS = -fobjc-arc -Wno-deprecated-declarations

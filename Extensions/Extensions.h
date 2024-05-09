@@ -1,5 +1,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <CoreText/CoreText.h>
+#import <rootless.h>
+#include <RemoteLog.h>
+
+#define WITCHER_PLIST_SETTINGS ROOT_PATH_NS(@"/var/mobile/Library/Preferences/dr.erast.witcherprefs.plist")
+#define WITCHER_PREFERENCES_BUNDLE_PATH ROOT_PATH_NS(@"/Library/PreferenceBundles/WitcherPreferences.bundle")
 
 @interface UIImage (Icon)
 /*
