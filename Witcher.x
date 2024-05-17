@@ -24,14 +24,17 @@ NSMutableArray<WitcherApplicationLayoutStruct *> *sourceApplications = nil;
 NSArray<SBAppLayout *> *appLayouts = nil;
 
 #pragma mark - Other
-BOOL witcherViewIsInitialized = NO;
+_Bool witcherViewIsInitialized = NO;
+_Bool handleRouterGestures = NO; // In essence, this is just a kind of crutch for `userInteractionEnabled` property for router
+_Bool routerViewIsPresented = NO;
+int applicationDidFinishLaunching;
 
 #pragma mark - Preferences
 NSUserDefaults *prefs;
 
 _Bool isEnabled;
-_Bool handleRouterGestures = NO; // In essence, this is just a kind of crutch for `userInteractionEnabled` property for router
-_Bool routerViewIsPresented = NO;
+_Bool hardwareButtonMode;
+
 
 %hook SBMainSwitcherViewController
 
@@ -61,8 +64,13 @@ _Bool routerViewIsPresented = NO;
 		 	[self performSelector: @selector(logBundles)]; 
 		}
 		else if ([[notification name] isEqualToString: @"ReleaseFrontMostApplication"]) {
-			// SBAppLayout *recentAppLayout = [[self performSelector:@selector(getApps)] firstObject];
-			// [self performSelector:@selector(removeAppLayout:) withObject:recentAppLayout]; // OR FRONT MOST APPLICATIONS DEPENDS ON WHAT ACTUALLY WORKS
+			SBApplication *frontApp = [(SpringBoard*)[UIApplication sharedApplication] _accessibilityFrontMostApplication];
+			if (!frontApp) {
+				NSArray<SBAppLayout *> *recentAppLayouts = [self performSelector:@selector(getApps)];
+				for (SBAppLayout *appLayout in recentAppLayouts) {
+					[self performSelector:@selector(removeAppLayout:) withObject:appLayout];
+				}
+			}
 		}
 		else if ([[notification name] isEqualToString: @"OpenRecentApplication"]) {
 			SBApplication *frontApp = [(SpringBoard*)[UIApplication sharedApplication] _accessibilityFrontMostApplication];
@@ -100,7 +108,6 @@ _Bool routerViewIsPresented = NO;
 -(void)viewDidAppear:(BOOL)animated {
     %orig(animated);
     [self performSelector:@selector(logBundles)];
-
 }
 
 -(void)_deleteAppLayoutsMatchingBundleIdentifier:(id)arg1 {
@@ -433,7 +440,6 @@ _Bool routerViewIsPresented = NO;
 	double speed = [[arg2 gestureEvent] peakSpeed];
 	
 	if ((speed < 2000 && router && [router alpha] > 0 && arg2) || routerViewIsPresented) {
-		// RLog(@"%.10f", [[arg2 gestureEvent] peakSpeed]);
 		CGPoint gesturePosition = [[arg2 gestureEvent] locationInContainerView];
 		unsigned long long gesturePhase = [[arg2 gestureEvent] phase];
 		[router handleGestureWithPosition:gesturePosition phase:gesturePhase interactionEnabled:handleRouterGestures];
@@ -466,12 +472,110 @@ _Bool routerViewIsPresented = NO;
 }
 %end
 
+%hook MTLumaDodgePillSettings
+-(void)setHeight:(double)arg1 {
+	if (hardwareButtonMode) { arg1 = 0; }
+	%orig;
+}
+
+- (void)setMinWidth:(double)arg1 {
+	if (hardwareButtonMode) { arg1 = 0; }
+	%orig;
+}
+%end
+
+
+%hook CSQuickActionsViewController
++ (BOOL)deviceSupportsButtons { return hardwareButtonMode ? NO : %orig; }
+%end
+
+
+%hook UIKeyboardImpl
++(UIEdgeInsets)deviceSpecificPaddingForInterfaceOrientation:(NSInteger)orientation inputMode:(id)mode {
+    UIEdgeInsets orig = %orig;
+	if (hardwareButtonMode) { orig.bottom = 0; }
+    return orig;
+}
+%end
+
+
+%hook BSPlatform
+- (NSInteger)homeButtonType {
+		return hardwareButtonMode ? 2 : %orig;
+}
+%end
+
+%hook SBLockHardwareButtonActions
+- (id)initWithHomeButtonType:(long long)arg1 proximitySensorManager:(id)arg2 {
+	return %orig((hardwareButtonMode ? 1 : arg1), arg2);
+}
+%end
+
+%hook SBHomeHardwareButtonActions
+- (id)initWitHomeButtonType:(long long)arg1 {
+	return (hardwareButtonMode ? %orig(1) : %orig);
+}
+%end
+
+%hook SpringBoard
+-(void)applicationDidFinishLaunching:(id)application {
+	if (hardwareButtonMode) { applicationDidFinishLaunching = 2; } 
+    %orig;
+}
+%end
+
+%hook SBPressGestureRecognizer
+- (void)setAllowedPressTypes:(NSArray *)arg1 {
+	if (hardwareButtonMode) {
+		NSArray * lockHome = @[@104, @101];
+		NSArray * lockVol = @[@104, @102, @103];
+		if ([arg1 isEqual:lockVol] && applicationDidFinishLaunching == 2) {
+			%orig(lockHome);
+			applicationDidFinishLaunching--;
+			return;
+		}
+	}
+    %orig;
+}
+%end
+
+%hook SBClickGestureRecognizer
+- (void)addShortcutWithPressTypes:(id)arg1 {
+    if (hardwareButtonMode && applicationDidFinishLaunching == 1) {
+        applicationDidFinishLaunching--;
+        return;
+    }
+    %orig;
+}
+%end
+
+%hook SBHomeHardwareButton
+- (id)initWithScreenshotGestureRecognizer:(id)arg1 homeButtonType:(long long)arg2 {
+	if (hardwareButtonMode) { return %orig(arg1, 1); }
+	return %orig;
+    
+}
+%end
+
+%hook CCUIModularControlCenterOverlayViewController
+- (void)setOverlayStatusBarHidden:(BOOL)arg1 {
+	if (hardwareButtonMode) { return; }
+    %orig;
+}
+%end
+
+%hook CCUIOverlayStatusBarPresentationProvider
+- (void)_addHeaderContentTransformAnimationToBatch:(id)arg1 transitionState:(id)arg2 {
+    if (hardwareButtonMode) { return; }
+    %orig;
+}
+%end
+
 
 static void updateSettings() {
 	NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:WITCHER_PLIST_SETTINGS];
 	isEnabled = prefs[@"isEnabled"] ? [prefs[@"isEnabled"] boolValue] : YES;
-
-	RLog(@"Witcher %@", isEnabled ? @"is enabled now" : @"isn't enabled now");
+	hardwareButtonMode = prefs[@"hardwareButtonMode"] ? [prefs[@"hardwareButtonMode"] boolValue] : NO;
 }
 
 

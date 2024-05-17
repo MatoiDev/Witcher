@@ -12,7 +12,7 @@
 
 
 /*
-  HLOS - iOS versions that support these headers, according to https://developer.limneos.net/.]
+  HLOS - iOS versions that support these headers, according to https://developer.limneos.net/
 */
 
 

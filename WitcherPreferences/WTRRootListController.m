@@ -37,7 +37,7 @@
 
         [spec setProperty:@"icon_compressed" forKey:@"icon"];
         [spec setProperty:@"https://github.com/MatoiDev/Witcher" forKey:@"url"];
-        [spec setProperty:AuthorCell.class forKey:@"cellClass"];
+        [spec setProperty:[AuthorCell class] forKey:@"cellClass"];
         [specifiers addObject:spec];
 
         [specifiers addObject:[PSSpecifier emptyGroupSpecifier]];
@@ -53,7 +53,26 @@
 
         [spec setProperty:@"isEnabled" forKey:@"key"];
         [spec setProperty:@NO forKey:@"default"];
-        [spec setProperty:WTRPowerCell.class forKey:@"cellClass"];
+        [spec setProperty:[WTRPowerCell class] forKey:@"cellClass"];
+        [specifiers addObject:spec];
+
+        [specifiers addObject:[PSSpecifier emptyGroupSpecifier]];
+
+        // Hardware Button mode switch cell
+        spec = [PSSpecifier preferenceSpecifierNamed:@""
+                                              target:self
+                                                 set:@selector(setPreferenceValue:specifier:)
+                                                 get:@selector(readPreferenceValue:)
+                                              detail:Nil
+                                                cell:[PSTableCell cellTypeFromString:@""]
+                                                edit:Nil];
+
+        [spec setProperty:[WitcherSwitchCell class] forKey:@"cellClass"];
+        [spec setProperty:@"Hardware button mode" forKey:@"title"];
+        [spec setProperty:@"Need a respring" forKey:@"subtitle"];
+        [spec setProperty:@NO forKey:@"default"];
+        [spec setProperty:@"hardwareButtonMode" forKey:@"key"];
+
         [specifiers addObject:spec];
 
         _specifiers = [specifiers copy];
@@ -95,7 +114,7 @@
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
 
     [[self titleLabel] setFont:[UIFont fontWithName:@"UbuntuSans-Bold" size:17]];
-    [[self titleLabel] setText:@"0.0.2~alpha"];
+    [[self titleLabel] setText:@"0.0.3~alpha"];
     [[self titleLabel] setTextColor:[UIColor labelColor]];
     [[self titleLabel] setTextAlignment:NSTextAlignmentCenter];
     [[[self navigationItem] titleView] addSubview:[self titleLabel]];
@@ -154,6 +173,10 @@
         CFRelease(font);
         CFRelease(provider);
     }
+}
+
+- (UITableViewStyle)tableViewStyle {
+    return UITableViewStyleInsetGrouped;
 }
 
 @end

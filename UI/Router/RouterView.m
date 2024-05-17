@@ -91,6 +91,7 @@
 -(void)setupQuickActionButtons {
     
     closeAppButton = [[UIButton alloc] init];
+    [closeAppButton setEnabled:NO];
     [closeAppButton addTarget:self action:@selector(closeApp) forControlEvents:UIControlEventTouchUpInside];
     [closeAppButton setImage:[UIImage systemImageNamed:@"xmark"] forState:UIControlStateNormal];
     

@@ -1,6 +1,6 @@
 Package: dr.erast.witcher
 Name: Witcher
-Version: 0.0.2~alpha
+Version: 0.0.3~alpha
 Architecture: iphoneos-arm
 Description: Magical iOS App Switcher 
 Maintainer: Erast <applewormdev@gmail.com>
