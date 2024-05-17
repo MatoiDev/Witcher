@@ -95,7 +95,7 @@
     [impactFeedbackGenerator impactOccurred];
     [powerButton toggle];
     [cellTitle setText:([powerButton isOn] ? @"Enabled" : @"Disabled")];
-    [self.specifier performSetterWithValue:@([powerButton isOn])];
+    [[self specifier] performSetterWithValue:@([powerButton isOn])];
 }
 
 -(void)registerCustomFonts:(NSArray<NSString *> *_Nullable)fonts {

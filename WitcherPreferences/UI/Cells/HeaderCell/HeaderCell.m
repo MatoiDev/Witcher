@@ -34,11 +34,15 @@
     [tweakNameLabel setFont:[UIFont fontWithName:@"UbuntuSans-Bold" size:50.0]];
     [tweakNameLabel setTextColor:[UIColor labelColor]];
     [tweakNameLabel setText:tweakName];
+    [tweakNameLabel setNumberOfLines:1];
+    [tweakNameLabel setAdjustsFontSizeToFitWidth:YES];
     
     descriptionLabel = [[UILabel alloc] init];
     [descriptionLabel setFont:[UIFont fontWithName:@"UbuntuSans-Medium" size:16.0]];
     [descriptionLabel setTextColor:[UIColor secondaryLabelColor]];
     [descriptionLabel setText:tweakDescription];
+    [descriptionLabel setNumberOfLines:1];
+    [descriptionLabel setAdjustsFontSizeToFitWidth:YES];
 
     imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:[WITCHER_PREFERENCES_BUNDLE_PATH stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", iconName]]]];
     

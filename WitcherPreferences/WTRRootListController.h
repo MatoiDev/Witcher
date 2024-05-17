@@ -2,9 +2,10 @@
 #import <Preferences/PSSpecifier.h>
 #import <notify.h>
 
+#import "UI/Cells/AuthorCell/AuthorCell.h"
 #import "UI/Cells/HeaderCell/HeaderCell.h"
 #import "UI/Cells/PowerCell/WTRPowerCell.h"
-#import "UI/Cells/AuthorCell/AuthorCell.h"
+#import "UI/Cells/SwitchCell/WitcherSwitchCell.h"
 
 #import "WitcherCustomFontsProtocol.h"
 

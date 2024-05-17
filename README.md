@@ -1,3 +1,4 @@
+
 ### iOS 16+ is NOT supported yet !
 
 
@@ -9,9 +10,9 @@ https://github.com/MatoiDev/Witcher/assets/78802792/9b2195ae-b183-4e2c-b4de-7560
 #### TODO LIST: (Might be replenished...)
 - [X] Make Logo
 - [X] Preferences integration
+- [X] Add support to hardware-button devices
 - [ ] Add options to preferences
 - [ ] Add support to iOS 16+
-- [ ] Add support to hardware-button devices 
 - [ ] Add xmark button functional
 
 
