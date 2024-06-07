@@ -20,6 +20,7 @@ typedef void(^LayoutUpdateBlock)(WitcherApplicationLayoutStruct *_Nullable);
 
 @property(nonatomic, strong)UIBlurEffect *witcherBlurEffect;
 @property(nonatomic, strong)UIColor *witcherViewBackgroundColor;
+@property(nonatomic, strong)UIColor *cellsTintColor;
 @property(nonatomic, strong)UIVisualEffectView *witcherBlurView;
 @property(nonatomic, strong)NSArray<RouterReusableCellView *> *reusableRouterCells;
 @property(nonatomic, strong)RouterReusableCellView *staticRouterStackCell;
@@ -30,12 +31,15 @@ typedef void(^LayoutUpdateBlock)(WitcherApplicationLayoutStruct *_Nullable);
 @property(nonatomic, copy) LayoutUpdateBlock layoutUpdateBlock;
 
 -(instancetype)initWithBlurEffect:(UIBlurEffect*)blurEffect backgroundColor:(UIColor *_Nullable)color;
+-(void)updateMainColor:(UIColor *)color;
+-(void)updateCellsWithColor:(UIColor *)color;
 -(void)updateCellsWithNewApplications:(NSArray<WitcherApplicationLayoutStruct *> *)layoutStructs includingFrontMostApplication:(_Bool)flag;
 -(void)handleGestureWithPosition:(CGPoint)coordinates phase:(unsigned long long)phase interactionEnabled:(_Bool)interactionEnabled;
 // Quick Actions
 -(void)closeApp;
 -(void)openPrevousApp;
 -(void)searchApp;
+-(void)updateActionButtonsWithState:(_Bool)state;
 
 @end
 

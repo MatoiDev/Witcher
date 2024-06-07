@@ -32,6 +32,7 @@
 @synthesize witcherBlurView;
 @synthesize witcherBlurEffect;
 @synthesize witcherViewBackgroundColor;
+@synthesize cellsTintColor;
 @synthesize reusableRouterCells;
 
 @synthesize closeAppButton;
@@ -48,7 +49,7 @@
         witcherBlurEffect = blurEffect;
         witcherViewBackgroundColor = (color == nil ? [UIColor clearColor] : color);
         
-        staticRouterStackCell = [[RouterReusableCellView alloc] initStaticCellWithColor:(color == nil ? [UIColor systemGrayColor] : color)];
+        staticRouterStackCell =  [[RouterReusableCellView alloc] initStaticCellWithTintColor:[UIColor whiteColor]];
         
         [self setupView];
     }
@@ -147,10 +148,10 @@
     if (!layoutStructs) {return;}
 
     if (!reusableRouterCells) { reusableRouterCells = [[NSArray<RouterReusableCellView *> alloc] init]; }
-    if ([reusableRouterCells count] != 5 && [layoutStructs count] != [reusableRouterCells count]) { [self prepareReusableRouterCells:layoutStructs]; }
-    
+    if (([reusableRouterCells count] != 5 && [layoutStructs count] != [reusableRouterCells count]) || (([reusableRouterCells count] == 5) && ([layoutStructs count] < 5))) { [self prepareReusableRouterCells:layoutStructs]; }
+
     for (int count=0; count < ([layoutStructs count] > 5 ? 5 : [layoutStructs count]); count++) {
-        [[[[reusableRouterCells reverseObjectEnumerator] allObjects] objectAtIndex:count] updateWithLayoutStruct:[layoutStructs objectAtIndex:count] tintColor:witcherViewBackgroundColor];
+        [[[[reusableRouterCells reverseObjectEnumerator] allObjects] objectAtIndex:count] updateWithLayoutStruct:[layoutStructs objectAtIndex:count] tintColor:cellsTintColor];
     }
     
     [goToPreviousAppButton setEnabled:[layoutStructs count] > 0];
@@ -165,7 +166,7 @@
     [staticRouterStackCell removeFromSuperview];
     staticRouterStackCell = nil;
     
-    staticRouterStackCell = [[RouterReusableCellView alloc] initStaticCellWithColor:(witcherViewBackgroundColor == [UIColor clearColor] ? [UIColor systemGrayColor] : witcherViewBackgroundColor)];
+    staticRouterStackCell = [[RouterReusableCellView alloc] initStaticCellWithTintColor:cellsTintColor];
     
     [self addSubview:staticRouterStackCell];
     
@@ -376,6 +377,26 @@
 
 }
 
+-(void)updateMainColor:(UIColor *)color {
+    [self setWitcherViewBackgroundColor:color];
+    [self setBackgroundColor: color];
+}
+
+-(void)updateCellsWithColor:(UIColor *)color {
+    [self setCellsTintColor:color];
+    for (RouterReusableCellView *cell in reusableRouterCells) {  [cell updateColor:color]; }
+}
+
+-(void)updateActionButtonsWithState:(_Bool)state {
+    [goToPreviousAppButton setHidden:state];
+    [goToPreviousAppButton setUserInteractionEnabled:state];
+
+    [searchButton setHidden:state];
+    [searchButton setUserInteractionEnabled:state];
+
+    [searchButton setUserInteractionEnabled:NO];
+    [closeAppButton setHidden:state];   
+}
 
 @end
 

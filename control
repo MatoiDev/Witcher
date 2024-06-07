@@ -7,5 +7,5 @@ Maintainer: Erast <applewormdev@gmail.com>
 Author: Erast <applewormdev@gmail.com>
 Section: Tweaks
 dev: Erast
-Depends: mobilesubstrate, firmware (>= 13.0), firmware (<= 15.6.1)
+Depends: mobilesubstrate, firmware (>= 14.0), firmware (<= 15.6.1)
 Icon: file:///var/jb/Library/PreferenceBundles/WitcherPreferences.bundle/icon_compressed.png 

@@ -5,12 +5,11 @@ export SYSROOT = $(THEOS)/sdks/iPhoneOS14.5.sdk
 FINALPACKAGE=1
 # DEBUG=1
 THEOS_PACKAGE_SCHEME=rootless
+
+
 ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
-	WitcherPreferences_INSTALL_PATH = /var/jb/Library/PreferenceBundles
-    WitcherPreferences_RESOURCES_PATH = /var/jb/Library/PreferenceBundles/WitcherPreferences.bundle
     THEOS_DEVICE_IP = 192.168.1.45
 else
-    WitcherPreferences_INSTALL_PATH = /Library/PreferenceBundles
     THEOS_DEVICE_IP = 192.168.1.39
 endif
 

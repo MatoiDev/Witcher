@@ -5,7 +5,7 @@
 #import "../../../WitcherCustomFontsProtocol.h"
 #import "Switch/WitcherSwitch.h"
 
-@interface PSSpecifier (PrivateMethods)
+@interface PSSpecifier (SwitchPrivateMethods)
 -(void)performSetterWithValue:(id)value;
 -(id)performGetter;
 @end

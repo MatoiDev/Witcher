@@ -59,23 +59,31 @@
     [authorNameLabel setText:authorName];
     [authorNameLabel setFont:[UIFont fontWithName:@"UbuntuSans-Medium" size:17.0]];
     [authorNameLabel setTextColor:[UIColor labelColor]];
+    [authorNameLabel setNumberOfLines:1];
+    [authorNameLabel setAdjustsFontSizeToFitWidth:YES];
+    [authorNameLabel setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     
     UILabel *projectNameLabel = [UILabel new];
     [projectNameLabel setText:@"Source code"];
     [projectNameLabel setFont:[UIFont fontWithName:@"UbuntuSans-Medium" size:17.0]];
     [projectNameLabel setTextColor:[UIColor labelColor]];
+    [projectNameLabel setNumberOfLines:1];
+    [projectNameLabel setAdjustsFontSizeToFitWidth:YES];
     
     UILabel *leftViewSubtitleLabel = [UILabel new];
     [leftViewSubtitleLabel setText:@"Developer's repo"];
     [leftViewSubtitleLabel setFont:[UIFont fontWithName:@"UbuntuSans-Medium" size:12.0]];
     [leftViewSubtitleLabel setTextColor:[UIColor secondaryLabelColor]];
+    [leftViewSubtitleLabel setNumberOfLines:1];
+    [leftViewSubtitleLabel setAdjustsFontSizeToFitWidth:YES];
     
     UILabel *rightCellSubtitleLabel = [UILabel new];
     [rightCellSubtitleLabel setText:@"Counting stars..."];
-    [self fetchStarsForLabel:rightCellSubtitleLabel];
-    
     [rightCellSubtitleLabel setFont:[UIFont fontWithName:@"UbuntuSans-Medium" size:12.0]];
     [rightCellSubtitleLabel setTextColor:[UIColor secondaryLabelColor]];
+    [rightCellSubtitleLabel setNumberOfLines:1];
+    [rightCellSubtitleLabel setAdjustsFontSizeToFitWidth:YES];
+    [self fetchStarsForLabel:rightCellSubtitleLabel];
     
     UIView *separator = [UIView new];
     [separator setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.5]];
@@ -146,10 +154,11 @@
         // Left View Subtitle
         [[leftViewSubtitleLabel leadingAnchor] constraintEqualToAnchor:[authorAvatar trailingAnchor] constant:8.0],
         [[leftViewSubtitleLabel bottomAnchor] constraintEqualToAnchor:[authorAvatar bottomAnchor]],
-        [[leftViewSubtitleLabel trailingAnchor] constraintEqualToAnchor:[separator leadingAnchor] constant:-8.0],
+        [[leftViewSubtitleLabel trailingAnchor] constraintEqualToAnchor:[separator leadingAnchor] constant:-12.0],
         
         // Github Logo
         [[githubLogoAnimationView leadingAnchor] constraintEqualToAnchor:[authorNameLabel trailingAnchor] constant:-3.0],
+        [[githubLogoAnimationView trailingAnchor] constraintLessThanOrEqualToAnchor:[separator leadingAnchor] constant:-3.0],
         [[githubLogoAnimationView centerYAnchor] constraintEqualToAnchor:[authorNameLabel centerYAnchor]],
         [[githubLogoAnimationView widthAnchor] constraintEqualToConstant:36],
         [[githubLogoAnimationView heightAnchor] constraintEqualToConstant:36],
@@ -169,12 +178,13 @@
         
         // Project name
         [[projectNameLabel leadingAnchor] constraintEqualToAnchor:[projectIcon trailingAnchor] constant:8.0],
+        [[projectNameLabel trailingAnchor] constraintEqualToAnchor:[rightView trailingAnchor] constant:-12.0],
         [[projectNameLabel topAnchor] constraintEqualToAnchor:[projectIcon topAnchor]],
         
         // Right View Subtitile
         [[rightCellSubtitleLabel leadingAnchor] constraintEqualToAnchor:[projectIcon trailingAnchor] constant:8.0],
         [[rightCellSubtitleLabel bottomAnchor] constraintEqualToAnchor:[projectIcon bottomAnchor]],
-        [[rightCellSubtitleLabel trailingAnchor] constraintEqualToAnchor:[rightView trailingAnchor] constant:-8.0],
+        [[rightCellSubtitleLabel trailingAnchor] constraintEqualToAnchor:[rightView trailingAnchor] constant:-12.0],
         
         // Progress Indicator
         [[_progressView centerYAnchor] constraintEqualToAnchor:[leftView centerYAnchor]],

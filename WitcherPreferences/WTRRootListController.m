@@ -56,8 +56,6 @@
         [spec setProperty:[WTRPowerCell class] forKey:@"cellClass"];
         [specifiers addObject:spec];
 
-        [specifiers addObject:[PSSpecifier emptyGroupSpecifier]];
-
         // Hardware Button mode switch cell
         spec = [PSSpecifier preferenceSpecifierNamed:@""
                                               target:self
@@ -72,7 +70,68 @@
         [spec setProperty:@"Need a respring" forKey:@"subtitle"];
         [spec setProperty:@NO forKey:@"default"];
         [spec setProperty:@"hardwareButtonMode" forKey:@"key"];
+        [specifiers addObject:spec];
 
+        // Header
+        spec = [PSSpecifier preferenceSpecifierNamed:@"UI Customization"
+                                              target:self
+                                                 set:Nil
+                                                 get:Nil
+                                              detail:Nil
+                                                cell:PSGroupCell
+                                                edit:Nil];
+
+        [spec setProperty:@"No need for respring" forKey:@"footerText"];
+        [specifiers addObject:spec];
+
+        // ColorPicker for Router 
+        spec = [PSSpecifier preferenceSpecifierNamed:@"Main color"
+                                              target:self
+                                                 set:@selector(setPreferenceValue:specifier:)
+                                                 get:@selector(readPreferenceValue:)
+                                              detail:Nil
+                                                cell:PSButtonCell
+                                                edit:Nil];
+
+        [spec setProperty:[WTRColorPickerCell class] forKey:@"cellClass"];
+        [spec setProperty:@"#FFFFFF" forKey:@"fallbackHex"];
+        [spec setProperty:@YES forKey:@"supportsAlpha"];
+        [spec setProperty:@"mainTintColor" forKey:@"key"];
+        [spec setProperty:@"#000000:00" forKey:@"default"];
+        [spec setProperty:@60 forKey:@"height"];
+        [specifiers addObject:spec];
+
+        // ColorPicker for Cells 
+        spec = [PSSpecifier preferenceSpecifierNamed:@"Cells tint color"
+                                              target:self
+                                                 set:@selector(setPreferenceValue:specifier:)
+                                                 get:@selector(readPreferenceValue:)
+                                              detail:Nil
+                                                cell:PSButtonCell
+                                                edit:Nil];
+
+        [spec setProperty:[WTRColorPickerCell class] forKey:@"cellClass"];
+        [spec setProperty:@"#FFFFFF" forKey:@"fallbackHex"];
+        [spec setProperty:@YES forKey:@"supportsAlpha"];
+        [spec setProperty:@"cellsTintColor" forKey:@"key"];
+        [spec setProperty:@"#FFFFFF" forKey:@"default"];
+        [spec setProperty:@60 forKey:@"height"];
+        [specifiers addObject:spec];
+
+        // Hardware Button mode switch cell
+        spec = [PSSpecifier preferenceSpecifierNamed:@""
+                                              target:self
+                                                 set:@selector(setPreferenceValue:specifier:)
+                                                 get:@selector(readPreferenceValue:)
+                                              detail:Nil
+                                                cell:[PSTableCell cellTypeFromString:@""]
+                                                edit:Nil];
+
+        [spec setProperty:[WitcherSwitchCell class] forKey:@"cellClass"];
+        [spec setProperty:@"Action buttons" forKey:@"title"];
+        [spec setProperty:@"Hide / show action buttons" forKey:@"subtitle"];
+        [spec setProperty:@YES forKey:@"default"];
+        [spec setProperty:@"actionButtons" forKey:@"key"];
         [specifiers addObject:spec];
 
         _specifiers = [specifiers copy];

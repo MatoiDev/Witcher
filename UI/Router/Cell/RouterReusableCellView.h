@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, nullable, strong)UILabel *applicationsCounterLabel;
 
 -(instancetype)initWithLayoutStruct:(WitcherApplicationLayoutStruct *)layoutStruct_t tintColor:(UIColor *)color;
--(instancetype)initStaticCellWithColor:(UIColor *)tintColor;
+-(instancetype)initStaticCellWithTintColor:(UIColor *)tintColor;
 -(void)updateColor:(UIColor *)tintColor;
 -(void)updateWithLayoutStruct:(WitcherApplicationLayoutStruct *)layoutStruct_t tintColor:(UIColor *)color;
 -(void)updateStaticCounterWithValue:(NSUInteger)arg;

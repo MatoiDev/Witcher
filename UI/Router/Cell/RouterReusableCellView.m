@@ -39,7 +39,7 @@
     return self;
 }
 
--(instancetype)initStaticCellWithColor:(UIColor *)tintColor {
+-(instancetype)initStaticCellWithTintColor:(UIColor *)tintColor {
     self = [super init];
     if (self) {
         applicationsCounter = 0;
@@ -60,10 +60,6 @@
     routerCellIcon = [layoutStruct_t icon];
     
     [self configureCell];
-}
-
--(void)updateColor:(UIColor *)tintColor {
-    routerCellTintColor = tintColor;
 }
 
 -(void)configureCell {
@@ -97,15 +93,16 @@
         
         [cellStackView setTranslatesAutoresizingMaskIntoConstraints:NO];
         
-        [self setBackgroundColor:[[UIColor systemGray2Color] colorWithAlphaComponent:0.8]];
-        
+        [self setBackgroundColor:  [[UIColor systemGray2Color] colorWithAlphaComponent:0.8]];
+        // [self setBackgroundColor: staticCellColor];
+       
         
         applicationsCounterLabel = [[UILabel alloc] init];
         [applicationsCounterLabel setFont:[UIFont systemFontOfSize:14 weight:UIFontWeightSemibold]];
-        [applicationsCounterLabel setTextColor:[UIColor whiteColor]];
+        [applicationsCounterLabel setTextColor:routerCellTintColor];
         [applicationsCounterLabel setText:[NSString stringWithFormat:@"%lu", (unsigned long)applicationsCounter]];
         
-        [iconImageView setTintColor:[UIColor whiteColor]];
+        [iconImageView setTintColor:routerCellTintColor];
         
         [cellStackView addArrangedSubview:iconImageView];
         [cellStackView addArrangedSubview:applicationsCounterLabel];
@@ -144,7 +141,7 @@
 -(void)addBorder {
     if (!self.borderLayer) {
         self.borderLayer = [CAShapeLayer layer];
-        self.borderLayer.strokeColor = [UIColor whiteColor].CGColor;
+        self.borderLayer.strokeColor = routerCellTintColor.CGColor;
         self.borderLayer.fillColor = [UIColor clearColor].CGColor;
         self.borderLayer.lineWidth = 2.5;
         [self.layer addSublayer:self.borderLayer];
@@ -196,5 +193,12 @@
         
     }
 }
+
+-(void)updateColor:(UIColor *)tintColor {
+    routerCellTintColor = tintColor;
+    if (applicationsCounterLabel) { [applicationsCounterLabel setTextColor:tintColor]; }
+    if (iconImageView) { [iconImageView setTintColor:tintColor]; } 
+}
+
 
 @end

@@ -6,6 +6,7 @@
 #import "UI/Cells/HeaderCell/HeaderCell.h"
 #import "UI/Cells/PowerCell/WTRPowerCell.h"
 #import "UI/Cells/SwitchCell/WitcherSwitchCell.h"
+#import "UI/Cells/ColorPickerCell/WTRColorPickerCell.h"
 
 #import "WitcherCustomFontsProtocol.h"
 

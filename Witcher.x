@@ -1,5 +1,6 @@
 #import "Witcher.h"
 
+
 /* TODO
 	- (Not implemented) Kill aplications with quick action button: https://www.reddit.com/r/jailbreakdevelopers/comments/d6wbla/remove_app_from_app_switcher/
 */
@@ -35,6 +36,8 @@ NSUserDefaults *prefs;
 _Bool isEnabled;
 _Bool hardwareButtonMode;
 
+static UIColor* colorFromHex(NSString *hexString, BOOL useAlpha);
+static void updateSettings();
 
 %hook SBMainSwitcherViewController
 
@@ -199,7 +202,7 @@ _Bool hardwareButtonMode;
 		if (!sbfTouchPassThroughTransitionView && [[self parentViewController] isKindOfClass: %c(SBDeckSwitcherViewController)] && self.frame.size.width > 0.0 && self.frame.size.height > 0.0) {
 		sbfTouchPassThroughTransitionView = [[self subviews] lastObject];
 		if (!witcherViewIsInitialized) {
-
+			NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:WITCHER_PLIST_SETTINGS];
 			[self performSelector:@selector(addSBSwitcherObserers)];
 
 			impactFeedbackGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium];
@@ -209,7 +212,7 @@ _Bool hardwareButtonMode;
 			witcherBackgroundBlurView = [[UIVisualEffectView alloc] initWithEffect:witcherBackgroundBlurViewEffect];
 
 			UIBlurEffect * blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterial];
-			router = [[RouterView alloc] initWithBlurEffect:blurEffect backgroundColor:nil];
+			router = [[RouterView alloc] initWithBlurEffect:blurEffect backgroundColor:colorFromHex(prefs[@"mainTintColor"] ? prefs[@"mainTintColor"] : @"FFFFFF", YES)];
 			container = [[WitcherApplicationLayoutContainer alloc] init];
 			
 			__weak typeof(self) weakSelf = self;
@@ -226,7 +229,10 @@ _Bool hardwareButtonMode;
 			
 			[self performSelector:@selector(configureUI)];
 
+			updateSettings(); // load router UI
+
 			witcherViewIsInitialized = YES; // Now it is initialised
+			
 		}	
 
 	}
@@ -571,11 +577,37 @@ _Bool hardwareButtonMode;
 }
 %end
 
+static UIColor* colorFromHex(NSString *hexString, BOOL useAlpha) {
+	hexString = [[hexString stringByReplacingOccurrencesOfString:@"#" withString:@""] uppercaseString];
+
+	if([hexString containsString:@":"] || hexString.length == 6) {
+		NSArray *colorComponents = [hexString componentsSeparatedByString:@":"];
+		CGFloat alpha = (colorComponents.count == 2) ? [[colorComponents lastObject] floatValue] / 100 : 1.0;
+		hexString = [NSString stringWithFormat:@"%@%02X", [colorComponents firstObject], (int)(alpha * 255.0)];
+	}
+
+	unsigned int hex = 0;
+	[[NSScanner scannerWithString:hexString] scanHexInt:&hex];
+
+	CGFloat r = ((hex & 0xFF000000) >> 24) / 255.0;
+	CGFloat g = ((hex & 0x00FF0000) >> 16) / 255.0;
+	CGFloat b = ((hex & 0x0000FF00) >> 8) / 255.0;
+	CGFloat a = (useAlpha) ? ((hex & 0x000000FF) >> 0) / 255.0 : 0xFF;
+
+	return [UIColor colorWithRed:r green:g blue:b alpha:a];
+}
+
 
 static void updateSettings() {
 	NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:WITCHER_PLIST_SETTINGS];
 	isEnabled = prefs[@"isEnabled"] ? [prefs[@"isEnabled"] boolValue] : YES;
 	hardwareButtonMode = prefs[@"hardwareButtonMode"] ? [prefs[@"hardwareButtonMode"] boolValue] : NO;
+
+	if (router) {
+		[router updateMainColor:colorFromHex(prefs[@"mainTintColor"] ? prefs[@"mainTintColor"] : @"FFFFFF", YES)];
+		[router updateCellsWithColor:colorFromHex(prefs[@"cellsTintColor"] ? prefs[@"cellsTintColor"] : @"FFFFFF", YES)];
+		[router updateActionButtonsWithState:!(prefs[@"actionButtons"] ? [prefs[@"actionButtons"] boolValue] : YES)];
+	}
 }
 
 
