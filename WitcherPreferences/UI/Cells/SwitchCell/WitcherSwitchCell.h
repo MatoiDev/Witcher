@@ -13,6 +13,7 @@
 @interface WitcherSwitchCell : PSTableCell <WitcherCustomFontsProtocol> {
     NSString *title;
     NSString *subtitle;
+    NSString *key;
 }
 
 @property(nonatomic, strong)WitcherSwitch *controlSwitch;

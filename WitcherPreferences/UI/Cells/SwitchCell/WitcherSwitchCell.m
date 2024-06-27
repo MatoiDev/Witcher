@@ -11,6 +11,7 @@
     if (self) {
         title = [[specifier properties] objectForKey:@"title"];
         subtitle = [[specifier properties] objectForKey:@"subtitle"];
+        key = [[specifier properties] objectForKey:@"key"];
 
         [self registerCustomFonts:nil]; 
     }
@@ -25,7 +26,7 @@
 
 -(void)setupViews {
     NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:WITCHER_PLIST_SETTINGS];
-    _Bool hardwareButtonMode = prefs[@"hardwareButtonMode"] ? [prefs[@"hardwareButtonMode"] boolValue] : YES;
+    _Bool hardwareButtonMode = prefs[key] ? [prefs[key] boolValue] : YES;
 
     controlSwitch = [[WitcherSwitch alloc] init];
     [controlSwitch setOn:hardwareButtonMode];

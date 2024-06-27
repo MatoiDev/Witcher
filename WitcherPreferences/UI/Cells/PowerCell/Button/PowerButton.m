@@ -19,7 +19,14 @@
         
         [self setPowerImageView:[[UIImageView alloc] initWithImage:tintedImage]];
         
-        [self setBackgroundColor:[UIColor darkGrayColor]];
+        [self setBackgroundColor:[[UIColor alloc] initWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            switch (traitCollection.userInterfaceStyle) {
+                case UIUserInterfaceStyleDark:
+                    return [UIColor darkGrayColor];
+                default:
+                    return [UIColor whiteColor];
+            }
+        }]];
         
         [[self layer] setCornerRadius:20];
         [[self layer] setMasksToBounds:YES];

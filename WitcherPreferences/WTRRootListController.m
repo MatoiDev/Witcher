@@ -118,7 +118,7 @@
         [spec setProperty:@60 forKey:@"height"];
         [specifiers addObject:spec];
 
-        // Hardware Button mode switch cell
+        // Hide/Show action buttons switch cell
         spec = [PSSpecifier preferenceSpecifierNamed:@""
                                               target:self
                                                  set:@selector(setPreferenceValue:specifier:)
@@ -166,14 +166,14 @@
     [self setupTitleView];
 }
 
-
 -(void)setupTitleView {
     [[self navigationItem] setTitleView: [UIView new]];
+    [[UIBarButtonItem appearance] setTintColor:[UIColor redColor]];
 
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
 
     [[self titleLabel] setFont:[UIFont fontWithName:@"UbuntuSans-Bold" size:17]];
-    [[self titleLabel] setText:@"0.0.3~alpha"];
+    [[self titleLabel] setText:@"1.0.0"];
     [[self titleLabel] setTextColor:[UIColor labelColor]];
     [[self titleLabel] setTextAlignment:NSTextAlignmentCenter];
     [[[self navigationItem] titleView] addSubview:[self titleLabel]];

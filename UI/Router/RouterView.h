@@ -27,6 +27,7 @@ typedef void(^LayoutUpdateBlock)(WitcherApplicationLayoutStruct *_Nullable);
 @property(nonatomic, strong)UIButton *closeAppButton;
 @property(nonatomic, strong)UIButton *goToPreviousAppButton;
 @property(nonatomic, strong)UIButton *searchButton;
+@property(nonatomic, assign)_Bool actionButtonsIsActive;
 
 @property(nonatomic, copy) LayoutUpdateBlock layoutUpdateBlock;
 

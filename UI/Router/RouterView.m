@@ -39,6 +39,7 @@
 @synthesize goToPreviousAppButton;
 @synthesize searchButton;
 @synthesize staticRouterStackCell;
+@synthesize actionButtonsIsActive;
 
 -(instancetype)initWithBlurEffect: (UIBlurEffect *)blurEffect backgroundColor: (UIColor *_Nullable)color {
     self = [super init];
@@ -354,6 +355,7 @@
     }
 
     // Handle touch for quick action buttons
+    if (!actionButtonsIsActive) { return; }
     if (interactionEnabled) {
         for (UIButton * button in @[closeAppButton, goToPreviousAppButton, searchButton]) {
             if (CGRectContainsPoint(button.frame, localCoordinates)) {
@@ -389,13 +391,12 @@
 
 -(void)updateActionButtonsWithState:(_Bool)state {
     [goToPreviousAppButton setHidden:state];
-    [goToPreviousAppButton setUserInteractionEnabled:state];
-
     [searchButton setHidden:state];
-    [searchButton setUserInteractionEnabled:state];
+    [closeAppButton setHidden:state];
 
     [searchButton setUserInteractionEnabled:NO];
-    [closeAppButton setHidden:state];   
+
+    actionButtonsIsActive = !state; 
 }
 
 @end
