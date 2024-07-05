@@ -93,7 +93,6 @@
 -(void)setupQuickActionButtons {
     
     closeAppButton = [[UIButton alloc] init];
-    [closeAppButton setEnabled:NO];
     [closeAppButton addTarget:self action:@selector(closeApp) forControlEvents:UIControlEventTouchUpInside];
     [closeAppButton setImage:[UIImage systemImageNamed:@"xmark"] forState:UIControlStateNormal];
     
@@ -156,6 +155,7 @@
     }
     
     [goToPreviousAppButton setEnabled:[layoutStructs count] > 0];
+    [closeAppButton setEnabled:[layoutStructs count] + flag > 0];
     
     [self updateStaticCellPosition];
     
@@ -394,7 +394,6 @@
     [searchButton setHidden:state];
     [closeAppButton setHidden:state];
 
-    [searchButton setUserInteractionEnabled:NO];
 
     actionButtonsIsActive = !state; 
 }

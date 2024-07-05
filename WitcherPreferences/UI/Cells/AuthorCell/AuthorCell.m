@@ -25,12 +25,10 @@
 }
 
 - (void)handleLeftTap {
-    RLog(@"left view was tapped");
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:profileURL] options:@{} completionHandler:nil];
 }
 
 - (void)handleRightTap {
-    RLog(@"right view was tapped");
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:projectURL] options:@{} completionHandler:nil];
 }
 

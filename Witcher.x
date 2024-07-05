@@ -1,10 +1,6 @@
 #import "Witcher.h"
 
 
-/* TODO
-	- (Not implemented) Kill aplications with quick action button: https://www.reddit.com/r/jailbreakdevelopers/comments/d6wbla/remove_app_from_app_switcher/
-*/
-
 #pragma mark - Views 
 RouterView *router = nil;
 WitcherApplicationLayoutContainer *container = nil;
@@ -17,6 +13,7 @@ SBMainSwitcherViewController *mainAppSwitcherVC;
 
 #pragma mark - Generators
 UIImpactFeedbackGenerator *impactFeedbackGenerator = nil;
+UIImpactFeedbackGenerator *heavyImpactFeedbackGenerator = nil;
 
 #pragma mark - Data
 NSMutableDictionary<NSString *, WitcherApplicationLayoutStruct *> *mutableReusableContainersData = nil;
@@ -35,6 +32,7 @@ NSUserDefaults *prefs;
 
 _Bool isEnabled;
 _Bool hardwareButtonMode;
+_Bool killNowPlayingApplication;
 
 static UIColor* colorFromHex(NSString *hexString, BOOL useAlpha);
 static void updateSettings();
@@ -68,12 +66,33 @@ static void updateSettings();
 		}
 		else if ([[notification name] isEqualToString: @"ReleaseFrontMostApplication"]) {
 			SBApplication *frontApp = [(SpringBoard*)[UIApplication sharedApplication] _accessibilityFrontMostApplication];
-			if (!frontApp) {
-				NSArray<SBAppLayout *> *recentAppLayouts = [self performSelector:@selector(getApps)];
-				for (SBAppLayout *appLayout in recentAppLayouts) {
-					[self performSelector:@selector(removeAppLayout:) withObject:appLayout];
-				}
+
+			if (!heavyImpactFeedbackGenerator) { 
+				heavyImpactFeedbackGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
+				[heavyImpactFeedbackGenerator prepare];
 			}
+
+			[heavyImpactFeedbackGenerator impactOccurred];
+
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.35 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				[UIView animateWithDuration:0.5
+									  delay:0
+					 usingSpringWithDamping:0.7 
+					  initialSpringVelocity:0.2 
+					        		options:UIViewAnimationOptionCurveEaseInOut
+								 animations:^{
+												if (!frontApp) {
+													NSArray<SBAppLayout *> *recentAppLayouts = [self performSelector:@selector(getApps)];
+													for (SBAppLayout *appLayout in recentAppLayouts) {
+														[self performSelector:@selector(removeAppLayout:) withObject:appLayout];
+													}
+												} else {
+													[self performSelector:@selector(removeFrontMostApplication:) withObject:frontApp];
+												}
+								 }
+								 completion:nil];
+			});
+
 		}
 		else if ([[notification name] isEqualToString: @"OpenRecentApplication"]) {
 			SBApplication *frontApp = [(SpringBoard*)[UIApplication sharedApplication] _accessibilityFrontMostApplication];
@@ -114,15 +133,17 @@ static void updateSettings();
 }
 
 -(void)_deleteAppLayoutsMatchingBundleIdentifier:(id)arg1 {
-
-	%orig;
 	if (!mutableReusableContainersData) { mutableReusableContainersData =  [[NSMutableDictionary<NSString *, WitcherApplicationLayoutStruct *> alloc] init]; }
 	[mutableReusableContainersData removeObjectForKey:arg1];
-	if (sbfTouchPassThroughTransitionView) {
-		SBApplication *frontApp = [(SpringBoard*)[UIApplication sharedApplication] _accessibilityFrontMostApplication];
-		[sbfTouchPassThroughTransitionView performSelector:@selector(updateRouterWithFrontMostApplications:) withObject:frontApp];
-	}
-	RLog(@"%@ removed from dictionary", arg1);
+
+	// CAUSE OF CRASH
+	// ----------------------------------------------------------------------------------------------------------------
+	// if (sbfTouchPassThroughTransitionView) {
+	// 	SBApplication *frontApp = [(SpringBoard*)[UIApplication sharedApplication] _accessibilityFrontMostApplication];
+	// 	[sbfTouchPassThroughTransitionView performSelector:@selector(updateRouterWithFrontMostApplications:) withObject:frontApp];
+	// }
+	// ----------------------------------------------------------------------------------------------------------------
+	%orig;
 }
 
 %new
@@ -134,11 +155,10 @@ static void updateSettings();
 -(void)logBundles {
     NSArray<SBAppLayout *> *layouts = [self performSelector:@selector(getApps)];
 	appLayouts = layouts;
-	int counter = 1;
+	__unused int counter = 1;
     for (SBAppLayout *appLayout in layouts) {
 		NSString *bundleId = [self performSelector:@selector(getBundleIDFromAppLayout:) withObject:appLayout];
         if (bundleId) {
-             RLog(@"%d) %@", counter, bundleId);
 			 counter += 1;
         }
     }
@@ -151,17 +171,30 @@ static void updateSettings();
 	if (itemBundleID) {
 		NSString *nowPlayingID = [[[%c(SBMediaController) sharedInstance] nowPlayingApplication] bundleIdentifier];
 
-		if (![itemBundleID isEqualToString: nowPlayingID]) {
-			if (@available(iOS 14.0, *)) {
-				[self _deleteAppLayoutsMatchingBundleIdentifier:itemBundleID];
-			} else {
-				[self _deleteAppLayout:item forReason: 1];
-			}
+		if (!killNowPlayingApplication && [itemBundleID isEqualToString: nowPlayingID]) return;
+
+		if (@available(iOS 14.0, *)) {
+			[self _deleteAppLayoutsMatchingBundleIdentifier:itemBundleID];
+		} else {
+			[self _deleteAppLayout:item forReason: 1];
 		}
+		
 	}
 }
 
+%new
+-(void)removeFrontMostApplication:(SBApplication *)application {
+	NSString *itemBundleID = [application bundleIdentifier];
+	if (itemBundleID) {
+		NSString *nowPlayingID = [[[%c(SBMediaController) sharedInstance] nowPlayingApplication] bundleIdentifier];
 
+		if (!killNowPlayingApplication && [itemBundleID isEqualToString: nowPlayingID]) return;
+
+		if (@available(iOS 14.0, *)) {
+			[self _deleteAppLayoutsMatchingBundleIdentifier:itemBundleID];
+		}
+	}
+}
 
 %new
 -(NSString *_Nullable)getBundleIDFromAppLayout:(SBAppLayout *_Nullable)appLayout {
@@ -276,12 +309,11 @@ static void updateSettings();
 
 %new
 -(void)showWitcherView {
-	
+	if (!isEnabled) { return; }
 	SBApplication *frontApp = [(SpringBoard*)[UIApplication sharedApplication] _accessibilityFrontMostApplication];
 	// NOTE: This message also update data
-	WitcherApplicationLayoutStruct *applicationStruct = [self performSelector:@selector(getPackedLayoutStructForApplication:) withObject:frontApp];
+	__unused WitcherApplicationLayoutStruct *applicationStruct = [self performSelector:@selector(getPackedLayoutStructForApplication:) withObject:frontApp];
 
-	RLog(@"New layoutStruct! %@", applicationStruct);
 	if (!isEnabled) { return; }
 	[self performSelector:@selector(updateRouterWithFrontMostApplications:) withObject:frontApp];
 
@@ -602,6 +634,7 @@ static void updateSettings() {
 	NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:WITCHER_PLIST_SETTINGS];
 	isEnabled = prefs[@"isEnabled"] ? [prefs[@"isEnabled"] boolValue] : YES;
 	hardwareButtonMode = prefs[@"hardwareButtonMode"] ? [prefs[@"hardwareButtonMode"] boolValue] : NO;
+	killNowPlayingApplication = prefs[@"killNPA"] ? [prefs[@"killNPA"] boolValue] : NO;
 
 	if (router) {
 		[router updateMainColor:colorFromHex(prefs[@"mainTintColor"] ? prefs[@"mainTintColor"] : @"FFFFFF", YES)];

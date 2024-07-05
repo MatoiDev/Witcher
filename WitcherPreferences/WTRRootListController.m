@@ -81,7 +81,7 @@
                                                 cell:PSGroupCell
                                                 edit:Nil];
 
-        [spec setProperty:@"No need for respring" forKey:@"footerText"];
+        // [spec setProperty:@"No need for respring" forKey:@"footerText"];
         [specifiers addObject:spec];
 
         // ColorPicker for Router 
@@ -118,6 +118,17 @@
         [spec setProperty:@60 forKey:@"height"];
         [specifiers addObject:spec];
 
+        // Actions
+        spec = [PSSpecifier preferenceSpecifierNamed:@"Actions"
+                                              target:self
+                                                 set:Nil
+                                                 get:Nil
+                                              detail:Nil
+                                                cell:PSGroupCell
+                                                edit:Nil];
+
+        [specifiers addObject:spec];
+
         // Hide/Show action buttons switch cell
         spec = [PSSpecifier preferenceSpecifierNamed:@""
                                               target:self
@@ -132,6 +143,22 @@
         [spec setProperty:@"Hide / show action buttons" forKey:@"subtitle"];
         [spec setProperty:@YES forKey:@"default"];
         [spec setProperty:@"actionButtons" forKey:@"key"];
+        [specifiers addObject:spec];
+
+        // Kill playing application
+        spec = [PSSpecifier preferenceSpecifierNamed:@""
+                                              target:self
+                                                 set:@selector(setPreferenceValue:specifier:)
+                                                 get:@selector(readPreferenceValue:)
+                                              detail:Nil
+                                                cell:[PSTableCell cellTypeFromString:@""]
+                                                edit:Nil];
+
+        [spec setProperty:[WitcherSwitchCell class] forKey:@"cellClass"];
+        [spec setProperty:@"Kill now playing app" forKey:@"title"];
+        [spec setProperty:@"Music, video players, etc." forKey:@"subtitle"];
+        [spec setProperty:@NO forKey:@"default"];
+        [spec setProperty:@"killNPA" forKey:@"key"];
         [specifiers addObject:spec];
 
         _specifiers = [specifiers copy];
@@ -173,7 +200,7 @@
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
 
     [[self titleLabel] setFont:[UIFont fontWithName:@"UbuntuSans-Bold" size:17]];
-    [[self titleLabel] setText:@"1.0.0"];
+    [[self titleLabel] setText:@"1.0.1"];
     [[self titleLabel] setTextColor:[UIColor labelColor]];
     [[self titleLabel] setTextAlignment:NSTextAlignmentCenter];
     [[[self navigationItem] titleView] addSubview:[self titleLabel]];

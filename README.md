@@ -11,9 +11,9 @@ https://github.com/MatoiDev/Witcher/assets/78802792/9b2195ae-b183-4e2c-b4de-7560
 - [X] Make Logo
 - [X] Preferences integration
 - [X] Add support to hardware-button devices
-- [ ] Add options to preferences
+- [X] Add options to preferences
+- [X] Add xmark button functional
 - [ ] Add support to iOS 16+
-- [ ] Add xmark button functional
 
 
 ### For testers
